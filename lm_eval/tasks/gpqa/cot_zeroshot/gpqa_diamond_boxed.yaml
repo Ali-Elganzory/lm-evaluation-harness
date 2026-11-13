@@ -1,0 +1,29 @@
+include: gpqa_diamond_cot_zeroshot.yaml
+task: gpqa_diamond_boxed
+tag: gpqa_custom
+dataset_kwargs:
+  revision: 83022cefff930aea54f654c0b282e74b9eeda5c6
+doc_to_text: |-
+  What is the correct answer to this question:{{Question}}
+  Choices:
+  (A) {{choice1}}
+  (B) {{choice2}}
+  (C) {{choice3}}
+  (D) {{choice4}}
+  Let's think step by step:
+
+  Put your final choice letter (A, B, C, or D) in a LaTeX box, for example \boxed{B}. Put the boxed choice in your final answer, outside any reasoning block.
+process_results: !function boxed_answer_utils.process_results
+filter_list:
+  - name: boxed-answer
+    filter:
+      - function: take_first
+metric_list:
+  - metric: exact_match
+    aggregation: mean
+    higher_is_better: true
+  - metric: format_compliance
+    aggregation: mean
+    higher_is_better: true
+metadata:
+  version: 1.0
